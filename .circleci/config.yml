@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: Set ENV
+          command: |
+            echo "export OWNER=koirand" >> $BASH_ENV
+            echo "export SPARK_VER=2.4.4" >> $BASH_ENV
+            echo "export HADOOP_VER=2.7" >> $BASH_ENV
+
+      - run:
+          name: Install spark
+          command: |
+            wget https://ftp.cc.uoc.gr/mirrors/apache/spark/spark-${SPARK_VER}/spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz
+            tar xvzf spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz
+            ln -s spark-${SPARK_VER}-bin-hadoop${HADOOP_VER} spark
+
+      - run:
+          name: Build Docker image
+          command: |
+            cd spark
+            bin/docker-image-tool.sh -r ${OWNER} -t ${SPARK_VER}-hadoop-${HADOOP_VER} build
+
+      - run:
+          name: Push Docker image to GitHub package registory
+          command: |
+            cd spark
+            docker login -u ${OWNER} -p ${DOCKERHUB_PASSWD}
+            docker push ${OWNER}/spark-py:${SPARK_VER}-hadoop-${HADOOP_VER}
