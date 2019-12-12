@@ -16,18 +16,23 @@ jobs:
           name: Install spark
           command: |
             wget https://ftp.cc.uoc.gr/mirrors/apache/spark/spark-${SPARK_VER}/spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz
-            tar xvzf spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz
+            tar xzf spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz
             ln -s spark-${SPARK_VER}-bin-hadoop${HADOOP_VER} spark
 
       - run:
           name: Build Docker image
           command: |
             cd spark
-            bin/docker-image-tool.sh -r ${OWNER} -t ${SPARK_VER}-hadoop-${HADOOP_VER} build
+            bin/docker-image-tool.sh -r ${OWNER} -t base build
 
       - run:
-          name: Push Docker image to GitHub package registory
+          name: Patch Docker image
+          command: |
+            docker build -t ${OWNER}/spark-py:${SPARK_VER}-hadoop-${HADOOP_VER}-python3.7 --build-arg base=${OWNER}/spark-py:base .
+
+      - run:
+          name: Push Docker image to Docker Hub
           command: |
             cd spark
             docker login -u ${OWNER} -p ${DOCKERHUB_PASSWD}
-            docker push ${OWNER}/spark-py:${SPARK_VER}-hadoop-${HADOOP_VER}
+            docker push ${OWNER}/spark-py:${SPARK_VER}-hadoop-${HADOOP_VER}-python3.7
