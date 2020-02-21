@@ -10,7 +10,7 @@ RUN apt update && apt install -y \
         libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python3.7
+# Install Python 3.7.4
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile && \
     echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile && \
