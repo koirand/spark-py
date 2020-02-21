@@ -7,14 +7,14 @@ RUN apk --no-cache add --virtual=for-build \
     bzip2-dev zlib-dev sqlite-dev ncurses-dev \
     libffi-dev linux-headers build-base curl git
 
-# Install Python3.7
+# Install Python3.7.4
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile && \
     echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile && \
     echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.bash_profile && \
     source ~/.bash_profile && \
-    pyenv install 3.7.3 && \
-    pyenv global 3.7.3 && \
+    pyenv install 3.7.4 && \
+    pyenv global 3.7.4 && \
     sed -i '20asource ~/.bash_profile' /opt/entrypoint.sh
 
 # Clearn up
